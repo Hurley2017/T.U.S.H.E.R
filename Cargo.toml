@@ -7,6 +7,7 @@ members = [
     "crates/tusher-metadata",
     "crates/tusher-sync",
     "crates/tusher-cli",
+    "crates/tusher-ffi",
 ]
 
 [workspace.package]
@@ -37,3 +38,6 @@ clap = { version = "4.5", features = ["derive"] }
 socket2 = "0.5"
 rusqlite = { version = "0.32", features = ["bundled"] }
 notify = "6.1"
+uniffi = { version = "0.28", default-features = false }
+uniffi_bindgen = "0.28"
+

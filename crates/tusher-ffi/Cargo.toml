@@ -1,0 +1,28 @@
+[package]
+name = "tusher-ffi"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+
+[lib]
+crate-type = ["cdylib", "rlib", "staticlib"]
+name = "tusher_ffi"
+
+[dependencies]
+tusher-core = { path = "../tusher-core" }
+tusher-network = { path = "../tusher-network" }
+tusher-transfer = { path = "../tusher-transfer" }
+tusher-metadata = { path = "../tusher-metadata" }
+tusher-sync = { path = "../tusher-sync" }
+
+tokio = { workspace = true }
+tracing = { workspace = true }
+tracing-subscriber = { workspace = true }
+anyhow = { workspace = true }
+thiserror = { workspace = true }
+hex = { workspace = true }
+uniffi = { workspace = true, features = ["tokio", "cli"] }
+
+[build-dependencies]
+uniffi = { workspace = true, features = ["build"] }
