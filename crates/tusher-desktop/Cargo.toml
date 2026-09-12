@@ -1,0 +1,46 @@
+[package]
+name = "tusher-desktop"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+
+[lib]
+name = "tusher_desktop"
+path = "src/lib.rs"
+
+[[bin]]
+name = "tusher-desktop"
+path = "src/main.rs"
+
+[dev-dependencies]
+tower = { version = "0.5", features = ["util"] }
+http-body-util = "0.1"
+tempfile = "3.10"
+http = "1.0"
+
+[dependencies]
+tusher-core = { path = "../tusher-core" }
+tusher-network = { path = "../tusher-network" }
+tusher-transfer = { path = "../tusher-transfer" }
+tusher-metadata = { path = "../tusher-metadata" }
+tusher-sync = { path = "../tusher-sync" }
+tokio.workspace = true
+clap.workspace = true
+tracing.workspace = true
+tracing-subscriber.workspace = true
+anyhow.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+axum = "0.7"
+opener = "0.7"
+
+[target.'cfg(windows)'.dependencies]
+windows-sys = { version = "0.52", features = [
+    "Win32_UI_Shell",
+    "Win32_UI_WindowsAndMessaging",
+    "Win32_Foundation",
+    "Win32_System_LibraryLoader",
+    "Win32_System_Registry",
+    "Win32_Graphics_Gdi"
+] }

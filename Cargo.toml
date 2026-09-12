@@ -8,6 +8,7 @@ members = [
     "crates/tusher-sync",
     "crates/tusher-cli",
     "crates/tusher-ffi",
+    "crates/tusher-desktop",
 ]
 
 [workspace.package]

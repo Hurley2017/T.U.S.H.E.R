@@ -48,7 +48,9 @@ crates/
 ├── tusher-transfer/   # Resumable, chunked file transfer engine (2 MB chunks, SHA-256 / BLAKE3)
 ├── tusher-metadata/   # SQLite event store, monotonic causal versioning & reconciliation
 ├── tusher-sync/       # Native filesystem watcher, debouncing, echo suppression & mesh cascade
-└── tusher-cli/        # Interactive node daemon, CLI control interface, and testing tools
+├── tusher-cli/        # Interactive node daemon, CLI control interface, and testing tools
+├── tusher-ffi/        # Mozilla UniFFI 0.28 FFI bridge & Kotlin bindings for Android
+└── tusher-desktop/    # Native Desktop System Tray, Windows Explorer Context Menus & Axum Web Dashboard
 ```
 
 ### Layered Architecture Diagram
@@ -56,7 +58,8 @@ crates/
 ```
 +-------------------------------------------------------------------------------+
 |                             User & Product Layer                              |
-|   CLI REPL (tusher-cli)  |  Desktop UI (Tauri/Flutter)  |  Android App (SAF)  |
+|   CLI REPL (tusher-cli)       |  Desktop Daemon & Web Dashboard (tusher-desktop)|
+|   Windows Explorer Context Menu|  Android SDK & UniFFI Bridge (tusher-ffi)     |
 +-------------------------------------------------------------------------------+
                                         |
 +-------------------------------------------------------------------------------+

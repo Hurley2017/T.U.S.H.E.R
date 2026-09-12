@@ -27,22 +27,20 @@ pub enum FsChangeEvent {
 
 /// Helper to determine if a path or component should be ignored
 pub fn should_ignore_path(path: &Path) -> bool {
-    for comp in path.components() {
-        if let std::path::Component::Normal(os_str) = comp {
-            let s = os_str.to_string_lossy();
-            // Ignore hidden files / directories and tusher internal staging
-            if s.starts_with('.') || s.starts_with('~') || s.starts_with("~$") {
-                return true;
-            }
-            // Ignore common temp extensions
-            if s.ends_with(".tmp")
-                || s.ends_with(".crdownload")
-                || s.ends_with(".part")
-                || s.ends_with(".swp")
-                || s.ends_with(".bak")
-            {
-                return true;
-            }
+    if let Some(file_name) = path.file_name() {
+        let s = file_name.to_string_lossy();
+        // Ignore hidden files / directories and tusher internal staging
+        if s.starts_with('.') || s.starts_with('~') || s.starts_with("~$") {
+            return true;
+        }
+        // Ignore common temp extensions
+        if s.ends_with(".tmp")
+            || s.ends_with(".crdownload")
+            || s.ends_with(".part")
+            || s.ends_with(".swp")
+            || s.ends_with(".bak")
+        {
+            return true;
         }
     }
     false

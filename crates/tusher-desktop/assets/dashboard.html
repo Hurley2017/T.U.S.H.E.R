@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>T.U.S.H.E.R - Decentralized Mesh Dashboard</title>
+  <style>
+    :root {
+      --bg-primary: #0b0f19;
+      --bg-secondary: #131b2e;
+      --bg-card: rgba(26, 36, 61, 0.7);
+      --border-card: rgba(255, 255, 255, 0.08);
+      --accent: #38bdf8;
+      --accent-hover: #0ea5e9;
+      --accent-glow: rgba(56, 189, 248, 0.25);
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: var(--bg-primary);
+      color: var(--text-main);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      background: rgba(19, 27, 46, 0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-card);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .brand-icon {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, var(--accent), #6366f1);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 1.2rem;
+      color: #fff;
+      box-shadow: 0 0 15px var(--accent-glow);
+    }
+
+    .brand-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      letter-spacing: -0.025em;
+    }
+
+    .badge {
+      padding: 0.25rem 0.6rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .badge-success { background: rgba(16, 185, 129, 0.15); color: var(--success); border: 1px solid rgba(16, 185, 129, 0.3); }
+    .badge-warning { background: rgba(245, 158, 11, 0.15); color: var(--warning); border: 1px solid rgba(245, 158, 11, 0.3); }
+
+    .pulse-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: currentColor;
+      box-shadow: 0 0 8px currentColor;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    button {
+      background: var(--bg-card);
+      color: var(--text-main);
+      border: 1px solid var(--border-card);
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    button:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    button.primary {
+      background: var(--accent);
+      color: #0b0f19;
+      font-weight: 600;
+      border-color: transparent;
+    }
+
+    button.primary:hover {
+      background: var(--accent-hover);
+    }
+
+    main {
+      flex: 1;
+      max-width: 1280px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    .node-hero {
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      border-radius: 12px;
+      padding: 1.5rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .hero-stat {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .hero-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+    }
+
+    .hero-val {
+      font-size: 1.15rem;
+      font-weight: 600;
+      font-family: var(--font-mono);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+
+    @media (max-width: 860px) {
+      .grid-2 { grid-template-columns: 1fr; }
+    }
+
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      border-radius: 12px;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border-card);
+      padding-bottom: 0.75rem;
+    }
+
+    .card-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+    }
+
+    .peer-list, .folder-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .item-row {
+      background: rgba(0, 0, 0, 0.2);
+      border: 1px solid var(--border-card);
+      border-radius: 8px;
+      padding: 0.85rem 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .item-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .item-title {
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+
+    .item-sub {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+    }
+
+    .item-tags {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+    }
+
+    .tag {
+      font-size: 0.7rem;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .tag-lan { color: #38bdf8; background: rgba(56, 189, 248, 0.1); }
+    .tag-wan { color: #a855f7; background: rgba(168, 85, 247, 0.1); }
+    .tag-relay { color: #f59e0b; background: rgba(245, 158, 11, 0.1); }
+
+    .input-group {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    input[type="text"] {
+      flex: 1;
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid var(--border-card);
+      border-radius: 6px;
+      padding: 0.5rem 0.75rem;
+      color: var(--text-main);
+      font-size: 0.875rem;
+    }
+
+    input[type="text"]:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+
+    footer {
+      border-top: 1px solid var(--border-card);
+      padding: 1rem 2rem;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <div class="brand-icon">T</div>
+      <div>
+        <div class="brand-title">T.U.S.H.E.R</div>
+        <div style="font-size: 0.7rem; color: var(--text-muted);">Decentralized Personal Mesh</div>
+      </div>
+    </div>
+    <div class="header-actions">
+      <div id="mesh-status-badge" class="badge badge-success">
+        <span class="pulse-dot"></span>
+        <span id="mesh-status-text">Mesh Active</span>
+      </div>
+      <button id="btn-toggle-sync" onclick="toggleSync()">Pause Sync</button>
+      <button id="btn-context-menu" onclick="toggleContextMenu()">Explorer Menu</button>
+      <button onclick="refreshData()">Refresh</button>
+    </div>
+  </header>
+
+  <main>
+    <div class="node-hero">
+      <div class="hero-stat">
+        <span class="hero-label">Local Node Name</span>
+        <span id="hero-node-name" class="hero-val">Loading...</span>
+      </div>
+      <div class="hero-stat">
+        <span class="hero-label">Node ID</span>
+        <span id="hero-node-id" class="hero-val" title="Click to copy">Loading...</span>
+      </div>
+      <div class="hero-stat">
+        <span class="hero-label">Network Ports</span>
+        <span id="hero-ports" class="hero-val">TCP: - | UDP: -</span>
+      </div>
+      <div class="hero-stat">
+        <span class="hero-label">Storage Location</span>
+        <span id="hero-storage" class="hero-val">Loading...</span>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <!-- MESH PEERS -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Mesh Peers (<span id="peer-count">0</span>)</div>
+        </div>
+        <div id="peer-list" class="peer-list">
+          <div style="color: var(--text-muted); font-size: 0.875rem; text-align: center; padding: 1rem;">
+            Searching local network via UDP Discovery...
+          </div>
+        </div>
+        <div style="border-top: 1px solid var(--border-card); padding-top: 0.75rem;">
+          <div style="font-size: 0.8rem; margin-bottom: 0.5rem; color: var(--text-muted);">Connect / Pair Remote Node:</div>
+          <div class="input-group">
+            <input type="text" id="input-peer-addr" placeholder="IP:Port (e.g. 192.168.1.100:42424)" />
+            <input type="text" id="input-peer-pin" placeholder="PIN (optional)" style="max-width: 100px;" />
+            <button class="primary" onclick="connectOrPairPeer()">Connect</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- SHARED FOLDERS -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Shared Folders (<span id="folder-count">0</span>)</div>
+        </div>
+        <div id="folder-list" class="folder-list">
+          <div style="color: var(--text-muted); font-size: 0.875rem; text-align: center; padding: 1rem;">
+            No shared folders registered yet.
+          </div>
+        </div>
+        <div style="border-top: 1px solid var(--border-card); padding-top: 0.75rem;">
+          <div style="font-size: 0.8rem; margin-bottom: 0.5rem; color: var(--text-muted);">Add New Shared Folder:</div>
+          <div class="input-group">
+            <input type="text" id="input-folder-id" placeholder="Folder ID" style="max-width: 120px;" />
+            <input type="text" id="input-folder-path" placeholder="Absolute local path" />
+            <button class="primary" onclick="addFolder()">Add Folder</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- QUICK SHARE & CONFLICTS -->
+    <div class="grid-2">
+      <!-- QUICK SHARE -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Instant File Transfer</div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+          <div style="font-size: 0.85rem; color: var(--text-muted);">Send any local file directly to a connected peer:</div>
+          <div class="input-group">
+            <input type="text" id="input-share-file" placeholder="File path (e.g. C:\Users\Docs\file.zip)" />
+          </div>
+          <div class="input-group">
+            <input type="text" id="input-share-peer" placeholder="Target Peer Node ID" />
+            <button class="primary" onclick="quickShareFile()">Send File</button>
+          </div>
+          <div id="transfer-status" style="font-size: 0.8rem; color: var(--accent); min-height: 1rem;"></div>
+        </div>
+      </div>
+
+      <!-- CONFLICTS -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Conflict Resolution</div>
+        </div>
+        <div id="conflict-list" class="folder-list">
+          <div style="color: var(--success); font-size: 0.875rem; text-align: center; padding: 1rem;">
+            ✓ All files synchronized without conflicts!
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    T.U.S.H.E.R Decentralized Mesh • Universal P2P Synchronization across Android, Windows, Linux, macOS
+  </footer>
+
+  <script>
+    let isSyncPaused = false;
+    let isContextMenuInstalled = false;
+
+    async function fetchStatus() {
+      try {
+        const res = await fetch('/api/status');
+        const data = await res.json();
+        document.getElementById('hero-node-name').textContent = data.node_name;
+        document.getElementById('hero-node-id').textContent = data.node_id;
+        document.getElementById('hero-ports').textContent = `TCP: ${data.tcp_port} | UDP: ${data.discovery_port} | Web: ${data.web_port}`;
+        document.getElementById('hero-storage').textContent = data.downloads_dir;
+
+        isSyncPaused = data.sync_paused;
+        const statusBadge = document.getElementById('mesh-status-badge');
+        const statusText = document.getElementById('mesh-status-text');
+        const toggleBtn = document.getElementById('btn-toggle-sync');
+
+        if (isSyncPaused) {
+          statusBadge.className = 'badge badge-warning';
+          statusText.textContent = 'Sync Paused';
+          toggleBtn.textContent = 'Resume Sync';
+        } else {
+          statusBadge.className = 'badge badge-success';
+          statusText.textContent = `Mesh Active (${data.active_peers} Peers)`;
+          toggleBtn.textContent = 'Pause Sync';
+        }
+
+        isContextMenuInstalled = data.context_menu_installed;
+        const menuBtn = document.getElementById('btn-context-menu');
+        menuBtn.textContent = isContextMenuInstalled ? 'Remove Context Menu' : 'Install Context Menu';
+      } catch (err) {
+        console.error("Failed to fetch status:", err);
+      }
+    }
+
+    async function fetchPeers() {
+      try {
+        const res = await fetch('/api/peers');
+        const peers = await res.json();
+        document.getElementById('peer-count').textContent = peers.length;
+        const container = document.getElementById('peer-list');
+
+        if (peers.length === 0) {
+          container.innerHTML = '<div style="color: var(--text-muted); font-size: 0.875rem; text-align: center; padding: 1rem;">No peers connected yet. Listening for LAN UDP beacons...</div>';
+          return;
+        }
+
+        container.innerHTML = peers.map(p => {
+          const tagClass = p.transport && p.transport.includes('TcpLan') ? 'tag-lan' : (p.transport && p.transport.includes('Quic') ? 'tag-wan' : 'tag-relay');
+          const connStatus = p.is_connected ? `<span class="tag ${tagClass}">${p.transport || 'Connected'}</span>` : '<span class="tag">Disconnected</span>';
+          const latency = p.latency_ms !== null ? `<span class="tag">${p.latency_ms} ms</span>` : '';
+          const paired = p.is_paired ? '<span class="tag" style="color: var(--success);">Trusted</span>' : '<span class="tag" style="color: var(--warning);">Unpaired</span>';
+
+          return `
+            <div class="item-row">
+              <div class="item-meta">
+                <div class="item-title">${p.node_name}</div>
+                <div class="item-sub">${p.node_id.substring(0, 18)}...</div>
+              </div>
+              <div class="item-tags">
+                ${connStatus}
+                ${latency}
+                ${paired}
+              </div>
+            </div>
+          `;
+        }).join('');
+      } catch (err) {
+        console.error("Failed to fetch peers:", err);
+      }
+    }
+
+    async function fetchFolders() {
+      try {
+        const res = await fetch('/api/folders');
+        const folders = await res.json();
+        document.getElementById('folder-count').textContent = folders.length;
+        const container = document.getElementById('folder-list');
+
+        if (folders.length === 0) {
+          container.innerHTML = '<div style="color: var(--text-muted); font-size: 0.875rem; text-align: center; padding: 1rem;">No shared folders registered yet.</div>';
+          return;
+        }
+
+        container.innerHTML = folders.map(f => `
+          <div class="item-row">
+            <div class="item-meta">
+              <div class="item-title">${f.folder_name} <span class="tag">${f.folder_id}</span></div>
+              <div class="item-sub">${f.local_path} • ${f.file_count} files</div>
+            </div>
+            <div class="item-tags">
+              <button onclick="syncFolder('${f.folder_id}')">Sync</button>
+              <button onclick="scanFolder('${f.folder_id}')">Scan</button>
+            </div>
+          </div>
+        `).join('');
+      } catch (err) {
+        console.error("Failed to fetch folders:", err);
+      }
+    }
+
+    async function fetchConflicts() {
+      try {
+        const res = await fetch('/api/conflicts');
+        const conflicts = await res.json();
+        const container = document.getElementById('conflict-list');
+
+        if (conflicts.length === 0) {
+          container.innerHTML = '<div style="color: var(--success); font-size: 0.875rem; text-align: center; padding: 1rem;">✓ All files synchronized without conflicts!</div>';
+          return;
+        }
+
+        container.innerHTML = conflicts.map(c => `
+          <div class="item-row" style="border-left: 3px solid var(--warning);">
+            <div class="item-meta">
+              <div class="item-title" style="color: var(--warning);">${c.relative_path}</div>
+              <div class="item-sub">Folder: ${c.folder_id} • Size: ${(c.file_size / 1024).toFixed(1)} KB</div>
+            </div>
+          </div>
+        `).join('');
+      } catch (err) {
+        console.error("Failed to fetch conflicts:", err);
+      }
+    }
+
+    async function toggleSync() {
+      try {
+        await fetch('/api/toggle-sync', { method: 'POST' });
+        refreshData();
+      } catch (err) {
+        alert("Failed to toggle sync: " + err);
+      }
+    }
+
+    async function toggleContextMenu() {
+      try {
+        const install = !isContextMenuInstalled;
+        const res = await fetch('/api/shell/context-menu', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ install })
+        });
+        const data = await res.json();
+        if (data.success) {
+          alert(install ? "Windows Explorer context menu installed!" : "Windows Explorer context menu removed!");
+          refreshData();
+        } else {
+          alert("Error: " + data.error);
+        }
+      } catch (err) {
+        alert("Failed to toggle context menu: " + err);
+      }
+    }
+
+    async function connectOrPairPeer() {
+      const addr = document.getElementById('input-peer-addr').value.trim();
+      const pin = document.getElementById('input-peer-pin').value.trim();
+      if (!addr) return alert("Please enter peer IP:Port");
+
+      try {
+        const endpoint = pin ? '/api/peers/pair' : '/api/peers/connect';
+        const body = pin ? { addr, pin } : { addr };
+        const res = await fetch(endpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body)
+        });
+        const data = await res.json();
+        if (data.success) {
+          alert("Connected to peer: " + data.peer_id);
+          refreshData();
+        } else {
+          alert("Connection error: " + data.error);
+        }
+      } catch (err) {
+        alert("Failed to connect: " + err);
+      }
+    }
+
+    async function addFolder() {
+      const folder_id = document.getElementById('input-folder-id').value.trim();
+      const path = document.getElementById('input-folder-path').value.trim();
+      if (!folder_id || !path) return alert("Please enter folder ID and path");
+
+      try {
+        const res = await fetch('/api/folders/add', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ folder_id, folder_name: folder_id, path })
+        });
+        const data = await res.json();
+        if (data.success) {
+          document.getElementById('input-folder-id').value = '';
+          document.getElementById('input-folder-path').value = '';
+          refreshData();
+        } else {
+          alert("Error adding folder: " + data.error);
+        }
+      } catch (err) {
+        alert("Failed to add folder: " + err);
+      }
+    }
+
+    async function syncFolder(folder_id) {
+      await fetch('/api/folders/sync', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ folder_id })
+      });
+      alert(`Sync triggered for folder '${folder_id}'`);
+    }
+
+    async function scanFolder(folder_id) {
+      const res = await fetch('/api/folders/scan', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ folder_id })
+      });
+      const data = await res.json();
+      if (data.success) {
+        alert(`Folder '${folder_id}' re-indexed successfully`);
+        refreshData();
+      } else {
+        alert("Error re-indexing: " + data.error);
+      }
+    }
+
+    async function quickShareFile() {
+      const file_path = document.getElementById('input-share-file').value.trim();
+      const peer_id = document.getElementById('input-share-peer').value.trim();
+      if (!file_path || !peer_id) return alert("Please enter file path and target peer ID");
+
+      const statusEl = document.getElementById('transfer-status');
+      statusEl.textContent = "Initiating transfer...";
+
+      try {
+        const res = await fetch('/api/transfers/send', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ peer_id, folder_id: 'quick_share', file_path })
+        });
+        const data = await res.json();
+        if (data.success) {
+          statusEl.textContent = `Transfer active! ID: ${data.transfer_id}`;
+        } else {
+          statusEl.textContent = `Error: ${data.error}`;
+        }
+      } catch (err) {
+        statusEl.textContent = `Failed: ${err}`;
+      }
+    }
+
+    function refreshData() {
+      fetchStatus();
+      fetchPeers();
+      fetchFolders();
+      fetchConflicts();
+    }
+
+    refreshData();
+    setInterval(refreshData, 3000);
+  </script>
+</body>
+</html>
