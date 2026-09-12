@@ -1,0 +1,8 @@
+[build]
+target = "x86_64-pc-windows-gnullvm"
+
+[target.x86_64-pc-windows-gnullvm]
+linker = "C:\\Users\\Tusher Mondal\\llvm-mingw\\bin\\clang.exe"
+ar = "C:\\Users\\Tusher Mondal\\llvm-mingw\\bin\\llvm-ar.exe"
+rustflags = ["-C", "link-arg=-Wl,--stack,8388608"]
+

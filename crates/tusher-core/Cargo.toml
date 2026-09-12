@@ -1,0 +1,22 @@
+[package]
+name = "tusher-core"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+
+[dependencies]
+tokio.workspace = true
+tokio-util.workspace = true
+ed25519-dalek.workspace = true
+rand.workspace = true
+sha2.workspace = true
+hmac.workspace = true
+data-encoding.workspace = true
+hex.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+bytes.workspace = true
+thiserror.workspace = true
+anyhow.workspace = true
+tracing.workspace = true

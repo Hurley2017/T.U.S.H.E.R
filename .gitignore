@@ -1,0 +1,22 @@
+/target
+**/*.rs.bk
+Cargo.lock
+
+# Test node databases & keys
+.tusher_data*
+.node_*
+.mesh_node_*
+.test_node*
+test_mesh_folder_*
+test_shared_*
+test_data/
+*.db
+*.db-journal
+*.part
+*.partial
+
+# Temporary scripts artifacts
+in_*.txt
+out_*.txt
+err_*.txt
+temp_test.*
