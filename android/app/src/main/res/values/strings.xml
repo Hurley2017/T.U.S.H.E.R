@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">T.U.S.H.E.R</string>
+    <string name="sync_active">Sync Active</string>
+    <string name="sync_paused">Sync Paused</string>
+    <string name="sync_idle">Idle</string>
+    <string name="pair_title">Pair with Desktop</string>
+    <string name="connect">Connect</string>
+    <string name="pause">Pause</string>
+    <string name="resume">Resume</string>
+    <string name="refresh">Refresh</string>
+</resources>

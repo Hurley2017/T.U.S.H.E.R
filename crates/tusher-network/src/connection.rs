@@ -249,8 +249,7 @@ impl PeerConnection {
                         }
                         Message::TransferInitAck { .. }
                         | Message::TransferChunkAck { .. }
-                        | Message::TransferCompleteAck { .. }
-                        | Message::FolderListResp { .. } => {
+                        | Message::TransferCompleteAck { .. } => {
                             let _ = response_tx.send(msg).await;
                         }
                         _ => {

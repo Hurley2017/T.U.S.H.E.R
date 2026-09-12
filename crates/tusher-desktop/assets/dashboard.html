@@ -3,18 +3,23 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>T.U.S.H.E.R - Decentralized Mesh Dashboard</title>
+  <title>T.U.S.H.E.R - Personal Mesh Folder Hub</title>
   <style>
     :root {
       --bg-primary: #0b0f19;
-      --bg-secondary: #131b2e;
-      --bg-card: rgba(26, 36, 61, 0.7);
+      --bg-secondary: #111827;
+      --bg-card: rgba(19, 27, 46, 0.75);
+      --bg-card-hover: rgba(28, 39, 66, 0.9);
       --border-card: rgba(255, 255, 255, 0.08);
+      --border-focus: #38bdf8;
       --accent: #38bdf8;
       --accent-hover: #0ea5e9;
       --accent-glow: rgba(56, 189, 248, 0.25);
+      --indigo: #6366f1;
+      --indigo-glow: rgba(99, 102, 241, 0.2);
       --text-main: #f8fafc;
       --text-muted: #94a3b8;
+      --text-dim: #64748b;
       --success: #10b981;
       --warning: #f59e0b;
       --danger: #ef4444;
@@ -31,11 +36,12 @@
       flex-direction: column;
     }
 
+    /* NAVBAR */
     header {
-      background: rgba(19, 27, 46, 0.85);
-      backdrop-filter: blur(12px);
+      background: rgba(15, 23, 42, 0.9);
+      backdrop-filter: blur(16px);
       border-bottom: 1px solid var(--border-card);
-      padding: 1rem 2rem;
+      padding: 0.85rem 2rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -47,54 +53,104 @@
     .brand {
       display: flex;
       align-items: center;
-      gap: 0.75rem;
+      gap: 0.85rem;
+      text-decoration: none;
+      color: inherit;
     }
 
     .brand-icon {
-      width: 36px;
-      height: 36px;
-      background: linear-gradient(135deg, var(--accent), #6366f1);
-      border-radius: 8px;
+      width: 38px;
+      height: 38px;
+      background: linear-gradient(135deg, var(--accent), var(--indigo));
+      border-radius: 10px;
       display: flex;
       align-items: center;
       justify-content: center;
       font-weight: 900;
-      font-size: 1.2rem;
+      font-size: 1.25rem;
       color: #fff;
-      box-shadow: 0 0 15px var(--accent-glow);
+      box-shadow: 0 0 16px var(--accent-glow);
     }
 
     .brand-title {
-      font-size: 1.25rem;
-      font-weight: 700;
+      font-size: 1.2rem;
+      font-weight: 800;
       letter-spacing: -0.025em;
     }
 
-    .badge {
-      padding: 0.25rem 0.6rem;
-      border-radius: 9999px;
-      font-size: 0.75rem;
-      font-weight: 600;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.4rem;
+    .brand-sub {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
     }
 
-    .badge-success { background: rgba(16, 185, 129, 0.15); color: var(--success); border: 1px solid rgba(16, 185, 129, 0.3); }
-    .badge-warning { background: rgba(245, 158, 11, 0.15); color: var(--warning); border: 1px solid rgba(245, 158, 11, 0.3); }
+    .nav-center {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    /* Connected Clients Pill */
+    .clients-pill {
+      background: rgba(30, 41, 59, 0.8);
+      border: 1px solid var(--border-card);
+      padding: 0.45rem 0.9rem;
+      border-radius: 9999px;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-size: 0.85rem;
+      font-weight: 500;
+    }
+
+    .clients-pill:hover {
+      background: rgba(51, 65, 85, 0.9);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .dot-online {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background-color: var(--success);
+      box-shadow: 0 0 8px var(--success);
+    }
+
+    /* Status Pill */
+    .status-pill {
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      color: var(--success);
+      padding: 0.45rem 0.85rem;
+      border-radius: 9999px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+    }
+
+    .status-pill.paused {
+      background: rgba(245, 158, 11, 0.12);
+      border-color: rgba(245, 158, 11, 0.25);
+      color: var(--warning);
+    }
 
     .pulse-dot {
-      width: 8px;
-      height: 8px;
+      width: 7px;
+      height: 7px;
       border-radius: 50%;
       background-color: currentColor;
       box-shadow: 0 0 8px currentColor;
     }
 
-    .header-actions {
+    .nav-actions {
       display: flex;
       align-items: center;
-      gap: 1rem;
+      gap: 0.75rem;
     }
 
     button {
@@ -102,11 +158,14 @@
       color: var(--text-main);
       border: 1px solid var(--border-card);
       padding: 0.5rem 1rem;
-      border-radius: 6px;
+      border-radius: 8px;
       font-size: 0.875rem;
       font-weight: 500;
       cursor: pointer;
       transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
     }
 
     button:hover {
@@ -115,19 +174,27 @@
     }
 
     button.primary {
-      background: var(--accent);
+      background: linear-gradient(135deg, var(--accent), #0284c7);
       color: #0b0f19;
-      font-weight: 600;
+      font-weight: 700;
       border-color: transparent;
+      box-shadow: 0 4px 12px var(--accent-glow);
     }
 
     button.primary:hover {
-      background: var(--accent-hover);
+      background: linear-gradient(135deg, #7dd3fc, var(--accent));
+      transform: translateY(-1px);
     }
 
+    button.secondary {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-main);
+    }
+
+    /* MAIN CONTAINER */
     main {
       flex: 1;
-      max-width: 1280px;
+      max-width: 1240px;
       width: 100%;
       margin: 0 auto;
       padding: 2rem;
@@ -136,59 +203,289 @@
       gap: 2rem;
     }
 
-    .node-hero {
-      background: var(--bg-card);
+    /* HERO BANNER */
+    .mesh-hero {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.7), rgba(15, 23, 42, 0.85));
       border: 1px solid var(--border-card);
-      border-radius: 12px;
-      padding: 1.5rem;
+      border-radius: 16px;
+      padding: 1.75rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1.5rem;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    }
+
+    .hero-title {
+      font-size: 1.5rem;
+      font-weight: 800;
+      margin-bottom: 0.35rem;
+      background: linear-gradient(to right, #f8fafc, #94a3b8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-desc {
+      color: var(--text-muted);
+      font-size: 0.92rem;
+      max-width: 600px;
+      line-height: 1.45;
+    }
+
+    .hero-stats {
+      display: flex;
+      gap: 2rem;
+      align-items: center;
+    }
+
+    .hero-stat-box {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+    }
+
+    .stat-val {
+      font-size: 1.85rem;
+      font-weight: 800;
+      color: var(--accent);
+      font-family: var(--font-mono);
+      line-height: 1;
+    }
+
+    .stat-label {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-top: 0.35rem;
+    }
+
+    /* SECTION HEADER */
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+
+    .section-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .count-badge {
+      background: rgba(56, 189, 248, 0.15);
+      color: var(--accent);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 0.2rem 0.6rem;
+      border-radius: 9999px;
+    }
+
+    /* FOLDERS GRID */
+    .folders-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
       gap: 1.5rem;
     }
 
-    .hero-stat {
+    .folder-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      border-radius: 14px;
+      padding: 1.5rem;
       display: flex;
       flex-direction: column;
-      gap: 0.25rem;
+      justify-content: space-between;
+      gap: 1.25rem;
+      transition: all 0.25s ease;
+      position: relative;
+      overflow: hidden;
     }
 
-    .hero-label {
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      color: var(--text-muted);
+    .folder-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--accent), var(--indigo));
+      opacity: 0;
+      transition: opacity 0.2s;
     }
 
-    .hero-val {
+    .folder-card:hover {
+      background: var(--bg-card-hover);
+      border-color: rgba(255, 255, 255, 0.15);
+      transform: translateY(-2px);
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.4);
+    }
+
+    .folder-card:hover::before {
+      opacity: 1;
+    }
+
+    .folder-top {
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+    }
+
+    .folder-icon-box {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      background: rgba(56, 189, 248, 0.12);
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.6rem;
+      flex-shrink: 0;
+    }
+
+    .folder-icon-box.remote {
+      background: rgba(99, 102, 241, 0.12);
+      border-color: rgba(99, 102, 241, 0.25);
+    }
+
+    .folder-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .folder-name {
       font-size: 1.15rem;
-      font-weight: 600;
-      font-family: var(--font-mono);
+      font-weight: 700;
+      margin-bottom: 0.25rem;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
     }
 
-    .grid-2 {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1.5rem;
+    /* Origin Device Note */
+    .origin-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.78rem;
+      font-weight: 600;
+      padding: 0.25rem 0.55rem;
+      border-radius: 6px;
+      margin-top: 0.25rem;
     }
 
-    @media (max-width: 860px) {
-      .grid-2 { grid-template-columns: 1fr; }
+    .origin-local {
+      background: rgba(56, 189, 248, 0.1);
+      color: #38bdf8;
+      border: 1px solid rgba(56, 189, 248, 0.2);
     }
 
-    .card {
+    .origin-remote {
+      background: rgba(99, 102, 241, 0.12);
+      color: #a5b4fc;
+      border: 1px solid rgba(99, 102, 241, 0.25);
+    }
+
+    .folder-path {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      margin-top: 0.6rem;
+      background: rgba(0, 0, 0, 0.25);
+      padding: 0.35rem 0.6rem;
+      border-radius: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.04);
+    }
+
+    .folder-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.82rem;
+      color: var(--text-dim);
+      border-top: 1px solid var(--border-card);
+      padding-top: 0.85rem;
+    }
+
+    .folder-actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .folder-actions button {
+      padding: 0.4rem 0.75rem;
+      font-size: 0.8rem;
+      border-radius: 6px;
+    }
+
+    /* EMPTY STATE */
+    .empty-state {
       background: var(--bg-card);
-      border: 1px solid var(--border-card);
-      border-radius: 12px;
-      padding: 1.5rem;
+      border: 2px dashed var(--border-card);
+      border-radius: 16px;
+      padding: 4rem 2rem;
+      text-align: center;
       display: flex;
       flex-direction: column;
+      align-items: center;
+      justify-content: center;
       gap: 1rem;
     }
 
-    .card-header {
+    .empty-icon {
+      font-size: 3.5rem;
+      opacity: 0.7;
+    }
+
+    .empty-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+    }
+
+    .empty-desc {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      max-width: 440px;
+      line-height: 1.5;
+    }
+
+    /* CONNECTED CLIENTS DRAWER / MODAL */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(8px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+    }
+
+    .modal-backdrop.open { display: flex; }
+
+    .modal-box {
+      background: #131b2e;
+      border: 1px solid var(--border-card);
+      border-radius: 16px;
+      padding: 1.75rem;
+      max-width: 560px;
+      width: 90%;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+      box-shadow: 0 24px 48px rgba(0, 0, 0, 0.6);
+    }
+
+    .modal-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -196,61 +493,66 @@
       padding-bottom: 0.75rem;
     }
 
-    .card-title {
-      font-size: 1.1rem;
-      font-weight: 600;
+    .modal-title {
+      font-size: 1.15rem;
+      font-weight: 700;
     }
 
-    .peer-list, .folder-list {
+    .btn-close {
+      background: transparent;
+      border: none;
+      font-size: 1.25rem;
+      color: var(--text-muted);
+      padding: 0.2rem 0.5rem;
+      cursor: pointer;
+    }
+
+    .client-card {
+      background: rgba(0, 0, 0, 0.25);
+      border: 1px solid var(--border-card);
+      border-radius: 10px;
+      padding: 1rem;
       display: flex;
       flex-direction: column;
-      gap: 0.75rem;
+      gap: 0.6rem;
     }
 
-    .item-row {
-      background: rgba(0, 0, 0, 0.2);
-      border: 1px solid var(--border-card);
-      border-radius: 8px;
-      padding: 0.85rem 1rem;
+    .client-top {
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
 
-    .item-meta {
+    .client-name {
+      font-weight: 700;
+      font-size: 1rem;
       display: flex;
-      flex-direction: column;
-      gap: 0.25rem;
+      align-items: center;
+      gap: 0.5rem;
     }
 
-    .item-title {
-      font-weight: 600;
-      font-size: 0.95rem;
-    }
-
-    .item-sub {
+    .client-serving {
       font-size: 0.8rem;
       color: var(--text-muted);
-      font-family: var(--font-mono);
     }
 
-    .item-tags {
+    .client-serving-tags {
       display: flex;
-      gap: 0.5rem;
-      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin-top: 0.3rem;
     }
 
-    .tag {
-      font-size: 0.7rem;
-      padding: 0.2rem 0.5rem;
+    .serving-tag {
+      background: rgba(56, 189, 248, 0.12);
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      color: var(--accent);
+      font-size: 0.75rem;
+      padding: 0.15rem 0.5rem;
       border-radius: 4px;
-      background: rgba(255, 255, 255, 0.08);
     }
 
-    .tag-lan { color: #38bdf8; background: rgba(56, 189, 248, 0.1); }
-    .tag-wan { color: #a855f7; background: rgba(168, 85, 247, 0.1); }
-    .tag-relay { color: #f59e0b; background: rgba(245, 158, 11, 0.1); }
-
+    /* INPUTS */
     .input-group {
       display: flex;
       gap: 0.5rem;
@@ -258,10 +560,10 @@
 
     input[type="text"] {
       flex: 1;
-      background: rgba(0, 0, 0, 0.3);
+      background: rgba(0, 0, 0, 0.35);
       border: 1px solid var(--border-card);
-      border-radius: 6px;
-      padding: 0.5rem 0.75rem;
+      border-radius: 8px;
+      padding: 0.6rem 0.85rem;
       color: var(--text-main);
       font-size: 0.875rem;
     }
@@ -271,397 +573,522 @@
       border-color: var(--accent);
     }
 
-    footer {
-      border-top: 1px solid var(--border-card);
-      padding: 1rem 2rem;
-      font-size: 0.8rem;
-      color: var(--text-muted);
-      text-align: center;
+    /* TOAST */
+    .toast {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      background: rgba(19, 27, 46, 0.95);
+      border: 1px solid var(--border-card);
+      color: var(--text-main);
+      padding: 0.85rem 1.25rem;
+      border-radius: 10px;
+      font-size: 0.875rem;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+      display: none;
+      align-items: center;
+      gap: 0.6rem;
+      z-index: 200;
     }
+
+    .toast.show { display: flex; }
   </style>
 </head>
 <body>
+
+  <!-- NAVBAR -->
   <header>
-    <div class="brand">
+    <a href="#" class="brand">
       <div class="brand-icon">T</div>
       <div>
         <div class="brand-title">T.U.S.H.E.R</div>
-        <div style="font-size: 0.7rem; color: var(--text-muted);">Decentralized Personal Mesh</div>
+        <div class="brand-sub">Personal Mesh Network</div>
+      </div>
+    </a>
+
+    <!-- NAVBAR CENTER: CONNECTED CLIENTS & SYNC STATUS -->
+    <div class="nav-center">
+      <div class="clients-pill" onclick="openClientsModal()" title="View connected mesh clients and their served data">
+        <span class="dot-online"></span>
+        <span>Connected Devices: <strong id="nav-peer-count">0</strong></span>
+        <span style="font-size: 0.7rem; opacity: 0.7;">▼</span>
+      </div>
+
+      <div id="nav-transfer-badge" class="status-pill">
+        <span class="pulse-dot"></span>
+        <span id="nav-transfer-text">✓ Mesh Active • Synced</span>
       </div>
     </div>
-    <div class="header-actions">
-      <div id="mesh-status-badge" class="badge badge-success">
-        <span class="pulse-dot"></span>
-        <span id="mesh-status-text">Mesh Active</span>
-      </div>
-      <button id="btn-toggle-sync" onclick="toggleSync()">Pause Sync</button>
-      <button id="btn-context-menu" onclick="toggleContextMenu()">Explorer Menu</button>
-      <button onclick="refreshData()">Refresh</button>
+
+    <!-- NAVBAR ACTIONS -->
+    <div class="nav-actions">
+      <button class="primary" onclick="quickShareFolder()">
+        <span>📁</span> Share a Folder
+      </button>
+      <button id="btn-toggle-sync" class="secondary" onclick="toggleSync()">
+        Pause Sync
+      </button>
+      <button class="secondary" onclick="refreshData()">
+        🔄 Refresh
+      </button>
     </div>
   </header>
 
+  <!-- MAIN VIEW -->
   <main>
-    <div class="node-hero">
-      <div class="hero-stat">
-        <span class="hero-label">Local Node Name</span>
-        <span id="hero-node-name" class="hero-val">Loading...</span>
-      </div>
-      <div class="hero-stat">
-        <span class="hero-label">Node ID</span>
-        <span id="hero-node-id" class="hero-val" title="Click to copy">Loading...</span>
-      </div>
-      <div class="hero-stat">
-        <span class="hero-label">Network Ports</span>
-        <span id="hero-ports" class="hero-val">TCP: - | UDP: -</span>
-      </div>
-      <div class="hero-stat">
-        <span class="hero-label">Storage Location</span>
-        <span id="hero-storage" class="hero-val">Loading...</span>
-      </div>
-    </div>
-
-    <div class="grid-2">
-      <!-- MESH PEERS -->
-      <div class="card">
-        <div class="card-header">
-          <div class="card-title">Mesh Peers (<span id="peer-count">0</span>)</div>
-        </div>
-        <div id="peer-list" class="peer-list">
-          <div style="color: var(--text-muted); font-size: 0.875rem; text-align: center; padding: 1rem;">
-            Searching local network via UDP Discovery...
-          </div>
-        </div>
-        <div style="border-top: 1px solid var(--border-card); padding-top: 0.75rem;">
-          <div style="font-size: 0.8rem; margin-bottom: 0.5rem; color: var(--text-muted);">Connect / Pair Remote Node:</div>
-          <div class="input-group">
-            <input type="text" id="input-peer-addr" placeholder="IP:Port (e.g. 192.168.1.100:42424)" />
-            <input type="text" id="input-peer-pin" placeholder="PIN (optional)" style="max-width: 100px;" />
-            <button class="primary" onclick="connectOrPairPeer()">Connect</button>
-          </div>
+    <!-- HERO BANNER -->
+    <div class="mesh-hero">
+      <div>
+        <div class="hero-title">Mesh Shared Folders</div>
+        <div class="hero-desc">
+          Zero-configuration decentralized folder sync. Any device running T.U.S.H.E.R on your network automatically synchronizes these folders in real time.
         </div>
       </div>
-
-      <!-- SHARED FOLDERS -->
-      <div class="card">
-        <div class="card-header">
-          <div class="card-title">Shared Folders (<span id="folder-count">0</span>)</div>
+      <div class="hero-stats">
+        <div class="hero-stat-box">
+          <span id="hero-folder-count" class="stat-val">0</span>
+          <span class="stat-label">Folders in Mesh</span>
         </div>
-        <div id="folder-list" class="folder-list">
-          <div style="color: var(--text-muted); font-size: 0.875rem; text-align: center; padding: 1rem;">
-            No shared folders registered yet.
-          </div>
-        </div>
-        <div style="border-top: 1px solid var(--border-card); padding-top: 0.75rem;">
-          <div style="font-size: 0.8rem; margin-bottom: 0.5rem; color: var(--text-muted);">Add New Shared Folder:</div>
-          <div class="input-group">
-            <input type="text" id="input-folder-id" placeholder="Folder ID" style="max-width: 120px;" />
-            <input type="text" id="input-folder-path" placeholder="Absolute local path" />
-            <button class="primary" onclick="addFolder()">Add Folder</button>
-          </div>
+        <div class="hero-stat-box">
+          <span id="hero-device-count" class="stat-val">1</span>
+          <span class="stat-label">Live Mesh Nodes</span>
         </div>
       </div>
     </div>
 
-    <!-- QUICK SHARE & CONFLICTS -->
-    <div class="grid-2">
-      <!-- QUICK SHARE -->
-      <div class="card">
-        <div class="card-header">
-          <div class="card-title">Instant File Transfer</div>
+    <!-- MESH FOLDERS SECTION -->
+    <div>
+      <div class="section-header">
+        <div class="section-title">
+          <span>All Mesh Shared Folders</span>
+          <span id="grid-count-badge" class="count-badge">0 Folders</span>
         </div>
-        <div style="display: flex; flex-direction: column; gap: 0.75rem;">
-          <div style="font-size: 0.85rem; color: var(--text-muted);">Send any local file directly to a connected peer:</div>
-          <div class="input-group">
-            <input type="text" id="input-share-file" placeholder="File path (e.g. C:\Users\Docs\file.zip)" />
-          </div>
-          <div class="input-group">
-            <input type="text" id="input-share-peer" placeholder="Target Peer Node ID" />
-            <button class="primary" onclick="quickShareFile()">Send File</button>
-          </div>
-          <div id="transfer-status" style="font-size: 0.8rem; color: var(--accent); min-height: 1rem;"></div>
-        </div>
+        <button class="primary" onclick="quickShareFolder()">
+          <span>+</span> Share Another Folder
+        </button>
       </div>
 
-      <!-- CONFLICTS -->
-      <div class="card">
-        <div class="card-header">
-          <div class="card-title">Conflict Resolution</div>
+      <div id="folders-container" class="folders-grid">
+        <!-- Folder cards populated dynamically by JS -->
+      </div>
+    </div>
+
+    <!-- QUICK ADD FOLDER MODAL / DIALOG -->
+    <div id="modal-share" class="modal-backdrop">
+      <div class="modal-box">
+        <div class="modal-header">
+          <div class="modal-title">📁 Share a Folder with the Mesh</div>
+          <button class="btn-close" onclick="closeShareModal()">✕</button>
         </div>
-        <div id="conflict-list" class="folder-list">
-          <div style="color: var(--success); font-size: 0.875rem; text-align: center; padding: 1rem;">
-            ✓ All files synchronized without conflicts!
+        <p style="font-size: 0.85rem; color: var(--text-muted);">
+          Pick a directory on this computer to contribute to the personal mesh network. All connected computers and mobile devices will be able to synchronize its files.
+        </p>
+        <div style="display: flex; flex-direction: column; gap: 0.85rem;">
+          <div>
+            <label style="font-size: 0.78rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">Folder Display Name</label>
+            <input type="text" id="input-folder-name" placeholder="e.g. Work Documents or Camera Roll" />
           </div>
+          <div>
+            <label style="font-size: 0.78rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">Folder Identifier</label>
+            <input type="text" id="input-folder-id" placeholder="e.g. work_docs" />
+          </div>
+          <div>
+            <label style="font-size: 0.78rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">Local Directory Path</label>
+            <div class="input-group">
+              <input type="text" id="input-folder-path" placeholder="C:\Users\...\MyFolder" />
+              <button type="button" onclick="browseFolderDialog()" style="white-space: nowrap;">Browse...</button>
+            </div>
+          </div>
+        </div>
+        <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 0.5rem;">
+          <button class="secondary" onclick="closeShareModal()">Cancel</button>
+          <button class="primary" onclick="confirmAddFolder()">Share with Mesh</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONNECTED CLIENTS MODAL -->
+    <div id="modal-clients" class="modal-backdrop">
+      <div class="modal-box">
+        <div class="modal-header">
+          <div class="modal-title">🌐 Connected Mesh Devices</div>
+          <button class="btn-close" onclick="closeClientsModal()">✕</button>
+        </div>
+        <div id="clients-list" style="display: flex; flex-direction: column; gap: 0.75rem; max-height: 380px; overflow-y: auto;">
+          <!-- Dynamically populated -->
+        </div>
+        <div style="border-top: 1px solid var(--border-card); padding-top: 0.75rem; display: flex; justify-content: space-between; align-items: center;">
+          <div style="font-size: 0.78rem; color: var(--text-muted);">
+            Discovery is automatic on Wi-Fi, LAN, and Tailscale.
+          </div>
+          <button class="secondary" onclick="closeClientsModal()">Close</button>
         </div>
       </div>
     </div>
   </main>
 
-  <footer>
-    T.U.S.H.E.R Decentralized Mesh • Universal P2P Synchronization across Android, Windows, Linux, macOS
-  </footer>
+  <!-- TOAST NOTIFICATION -->
+  <div id="toast" class="toast">
+    <span id="toast-msg">Action completed</span>
+  </div>
 
   <script>
-    let isSyncPaused = false;
-    let isContextMenuInstalled = false;
+    let currentStatus = null;
+    let currentPeers = [];
+    let currentFolders = [];
 
-    async function fetchStatus() {
+    // Toast helper
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      document.getElementById('toast-msg').innerText = msg;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 3500);
+    }
+
+    // Modal helpers
+    function openClientsModal() {
+      renderClientsModal();
+      document.getElementById('modal-clients').classList.add('open');
+    }
+    function closeClientsModal() {
+      document.getElementById('modal-clients').classList.remove('open');
+    }
+
+    function openShareModal() {
+      document.getElementById('modal-share').classList.add('open');
+    }
+    function closeShareModal() {
+      document.getElementById('modal-share').classList.remove('open');
+    }
+
+    // Direct Windows Folder Browser
+    async function quickShareFolder() {
       try {
-        const res = await fetch('/api/status');
+        const res = await fetch('/api/shell/pick-folder', { method: 'POST' });
         const data = await res.json();
-        document.getElementById('hero-node-name').textContent = data.node_name;
-        document.getElementById('hero-node-id').textContent = data.node_id;
-        document.getElementById('hero-ports').textContent = `TCP: ${data.tcp_port} | UDP: ${data.discovery_port} | Web: ${data.web_port}`;
-        document.getElementById('hero-storage').textContent = data.downloads_dir;
+        if (data.selected && data.path) {
+          const folderPath = data.path;
+          const parts = folderPath.replace(/\\/g, '/').split('/');
+          const folderName = parts[parts.length - 1] || "SharedFolder";
+          const folderId = folderName.toLowerCase().replace(/[^a-z0-9]/g, '_');
 
-        isSyncPaused = data.sync_paused;
-        const statusBadge = document.getElementById('mesh-status-badge');
-        const statusText = document.getElementById('mesh-status-text');
-        const toggleBtn = document.getElementById('btn-toggle-sync');
-
-        if (isSyncPaused) {
-          statusBadge.className = 'badge badge-warning';
-          statusText.textContent = 'Sync Paused';
-          toggleBtn.textContent = 'Resume Sync';
+          document.getElementById('input-folder-name').value = folderName;
+          document.getElementById('input-folder-id').value = folderId;
+          document.getElementById('input-folder-path').value = folderPath;
+          openShareModal();
         } else {
-          statusBadge.className = 'badge badge-success';
-          statusText.textContent = `Mesh Active (${data.active_peers} Peers)`;
-          toggleBtn.textContent = 'Pause Sync';
+          openShareModal();
         }
-
-        isContextMenuInstalled = data.context_menu_installed;
-        const menuBtn = document.getElementById('btn-context-menu');
-        menuBtn.textContent = isContextMenuInstalled ? 'Remove Context Menu' : 'Install Context Menu';
       } catch (err) {
-        console.error("Failed to fetch status:", err);
+        openShareModal();
       }
     }
 
-    async function fetchPeers() {
+    async function browseFolderDialog() {
       try {
-        const res = await fetch('/api/peers');
-        const peers = await res.json();
-        document.getElementById('peer-count').textContent = peers.length;
-        const container = document.getElementById('peer-list');
-
-        if (peers.length === 0) {
-          container.innerHTML = '<div style="color: var(--text-muted); font-size: 0.875rem; text-align: center; padding: 1rem;">No peers connected yet. Listening for LAN UDP beacons...</div>';
-          return;
-        }
-
-        container.innerHTML = peers.map(p => {
-          const tagClass = p.transport && p.transport.includes('TcpLan') ? 'tag-lan' : (p.transport && p.transport.includes('Quic') ? 'tag-wan' : 'tag-relay');
-          const connStatus = p.is_connected ? `<span class="tag ${tagClass}">${p.transport || 'Connected'}</span>` : '<span class="tag">Disconnected</span>';
-          const latency = p.latency_ms !== null ? `<span class="tag">${p.latency_ms} ms</span>` : '';
-          const paired = p.is_paired ? '<span class="tag" style="color: var(--success);">Trusted</span>' : '<span class="tag" style="color: var(--warning);">Unpaired</span>';
-
-          return `
-            <div class="item-row">
-              <div class="item-meta">
-                <div class="item-title">${p.node_name}</div>
-                <div class="item-sub">${p.node_id.substring(0, 18)}...</div>
-              </div>
-              <div class="item-tags">
-                ${connStatus}
-                ${latency}
-                ${paired}
-              </div>
-            </div>
-          `;
-        }).join('');
-      } catch (err) {
-        console.error("Failed to fetch peers:", err);
-      }
-    }
-
-    async function fetchFolders() {
-      try {
-        const res = await fetch('/api/folders');
-        const folders = await res.json();
-        document.getElementById('folder-count').textContent = folders.length;
-        const container = document.getElementById('folder-list');
-
-        if (folders.length === 0) {
-          container.innerHTML = '<div style="color: var(--text-muted); font-size: 0.875rem; text-align: center; padding: 1rem;">No shared folders registered yet.</div>';
-          return;
-        }
-
-        container.innerHTML = folders.map(f => `
-          <div class="item-row">
-            <div class="item-meta">
-              <div class="item-title">${f.folder_name} <span class="tag">${f.folder_id}</span></div>
-              <div class="item-sub">${f.local_path} • ${f.file_count} files</div>
-            </div>
-            <div class="item-tags">
-              <button onclick="syncFolder('${f.folder_id}')">Sync</button>
-              <button onclick="scanFolder('${f.folder_id}')">Scan</button>
-            </div>
-          </div>
-        `).join('');
-      } catch (err) {
-        console.error("Failed to fetch folders:", err);
-      }
-    }
-
-    async function fetchConflicts() {
-      try {
-        const res = await fetch('/api/conflicts');
-        const conflicts = await res.json();
-        const container = document.getElementById('conflict-list');
-
-        if (conflicts.length === 0) {
-          container.innerHTML = '<div style="color: var(--success); font-size: 0.875rem; text-align: center; padding: 1rem;">✓ All files synchronized without conflicts!</div>';
-          return;
-        }
-
-        container.innerHTML = conflicts.map(c => `
-          <div class="item-row" style="border-left: 3px solid var(--warning);">
-            <div class="item-meta">
-              <div class="item-title" style="color: var(--warning);">${c.relative_path}</div>
-              <div class="item-sub">Folder: ${c.folder_id} • Size: ${(c.file_size / 1024).toFixed(1)} KB</div>
-            </div>
-          </div>
-        `).join('');
-      } catch (err) {
-        console.error("Failed to fetch conflicts:", err);
-      }
-    }
-
-    async function toggleSync() {
-      try {
-        await fetch('/api/toggle-sync', { method: 'POST' });
-        refreshData();
-      } catch (err) {
-        alert("Failed to toggle sync: " + err);
-      }
-    }
-
-    async function toggleContextMenu() {
-      try {
-        const install = !isContextMenuInstalled;
-        const res = await fetch('/api/shell/context-menu', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ install })
-        });
+        const res = await fetch('/api/shell/pick-folder', { method: 'POST' });
         const data = await res.json();
-        if (data.success) {
-          alert(install ? "Windows Explorer context menu installed!" : "Windows Explorer context menu removed!");
-          refreshData();
-        } else {
-          alert("Error: " + data.error);
+        if (data.selected && data.path) {
+          document.getElementById('input-folder-path').value = data.path;
+          const parts = data.path.replace(/\\/g, '/').split('/');
+          const folderName = parts[parts.length - 1] || "SharedFolder";
+          if (!document.getElementById('input-folder-name').value) {
+            document.getElementById('input-folder-name').value = folderName;
+          }
+          if (!document.getElementById('input-folder-id').value) {
+            document.getElementById('input-folder-id').value = folderName.toLowerCase().replace(/[^a-z0-9]/g, '_');
+          }
         }
-      } catch (err) {
-        alert("Failed to toggle context menu: " + err);
+      } catch (e) {
+        showToast("Folder dialog error: " + e);
       }
     }
 
-    async function connectOrPairPeer() {
-      const addr = document.getElementById('input-peer-addr').value.trim();
-      const pin = document.getElementById('input-peer-pin').value.trim();
-      if (!addr) return alert("Please enter peer IP:Port");
-
-      try {
-        const endpoint = pin ? '/api/peers/pair' : '/api/peers/connect';
-        const body = pin ? { addr, pin } : { addr };
-        const res = await fetch(endpoint, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(body)
-        });
-        const data = await res.json();
-        if (data.success) {
-          alert("Connected to peer: " + data.peer_id);
-          refreshData();
-        } else {
-          alert("Connection error: " + data.error);
-        }
-      } catch (err) {
-        alert("Failed to connect: " + err);
-      }
-    }
-
-    async function addFolder() {
+    async function confirmAddFolder() {
+      const name = document.getElementById('input-folder-name').value.trim();
       const folder_id = document.getElementById('input-folder-id').value.trim();
       const path = document.getElementById('input-folder-path').value.trim();
-      if (!folder_id || !path) return alert("Please enter folder ID and path");
+
+      if (!name || !folder_id || !path) {
+        alert("Please provide Folder Name, Identifier, and local directory path.");
+        return;
+      }
 
       try {
         const res = await fetch('/api/folders/add', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ folder_id, folder_name: folder_id, path })
+          body: JSON.stringify({ folder_id, folder_name: name, path })
         });
         const data = await res.json();
         if (data.success) {
-          document.getElementById('input-folder-id').value = '';
-          document.getElementById('input-folder-path').value = '';
+          showToast(`Shared "${name}" with the mesh!`);
+          closeShareModal();
           refreshData();
         } else {
-          alert("Error adding folder: " + data.error);
+          alert("Failed to share folder: " + data.error);
         }
-      } catch (err) {
-        alert("Failed to add folder: " + err);
+      } catch (e) {
+        alert("Error: " + e);
       }
     }
 
-    async function syncFolder(folder_id) {
-      await fetch('/api/folders/sync', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ folder_id })
-      });
-      alert(`Sync triggered for folder '${folder_id}'`);
-    }
-
-    async function scanFolder(folder_id) {
-      const res = await fetch('/api/folders/scan', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ folder_id })
-      });
-      const data = await res.json();
-      if (data.success) {
-        alert(`Folder '${folder_id}' re-indexed successfully`);
-        refreshData();
-      } else {
-        alert("Error re-indexing: " + data.error);
-      }
-    }
-
-    async function quickShareFile() {
-      const file_path = document.getElementById('input-share-file').value.trim();
-      const peer_id = document.getElementById('input-share-peer').value.trim();
-      if (!file_path || !peer_id) return alert("Please enter file path and target peer ID");
-
-      const statusEl = document.getElementById('transfer-status');
-      statusEl.textContent = "Initiating transfer...";
-
+    async function syncFolder(folderId) {
+      showToast(`Synchronizing folder...`);
       try {
-        const res = await fetch('/api/transfers/send', {
+        await fetch('/api/folders/sync', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ peer_id, folder_id: 'quick_share', file_path })
+          body: JSON.stringify({ folder_id: folderId })
         });
-        const data = await res.json();
-        if (data.success) {
-          statusEl.textContent = `Transfer active! ID: ${data.transfer_id}`;
-        } else {
-          statusEl.textContent = `Error: ${data.error}`;
-        }
-      } catch (err) {
-        statusEl.textContent = `Failed: ${err}`;
+        showToast(`Sync triggered!`);
+      } catch (e) {
+        showToast(`Sync error: ` + e);
       }
     }
 
-    function refreshData() {
-      fetchStatus();
-      fetchPeers();
-      fetchFolders();
-      fetchConflicts();
+    async function rescanFolder(folderId) {
+      showToast(`Rescanning folder files...`);
+      try {
+        await fetch('/api/folders/scan', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ folder_id: folderId })
+        });
+        showToast(`Rescan finished!`);
+        refreshData();
+      } catch (e) {
+        showToast(`Rescan error: ` + e);
+      }
     }
 
+    async function openInExplorer(path) {
+      try {
+        await fetch('/api/shell/open-folder', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ path })
+        });
+      } catch (e) {
+        showToast(`Error opening folder: ` + e);
+      }
+    }
+
+    async function toggleSync() {
+      try {
+        const res = await fetch('/api/toggle-sync', { method: 'POST' });
+        const data = await res.json();
+        const btn = document.getElementById('btn-toggle-sync');
+        btn.innerText = data.sync_paused ? "Resume Sync" : "Pause Sync";
+        showToast(data.sync_paused ? "Syncing paused" : "Syncing resumed");
+        refreshData();
+      } catch (e) {
+        showToast(`Error toggling sync: ` + e);
+      }
+    }
+
+    function renderClientsModal() {
+      const container = document.getElementById('clients-list');
+      container.innerHTML = '';
+
+      // 1. Local Device
+      if (currentStatus) {
+        const localCard = document.createElement('div');
+        localCard.className = 'client-card';
+        localCard.style.borderColor = 'rgba(56, 189, 248, 0.4)';
+        localCard.innerHTML = `
+          <div class="client-top">
+            <div class="client-name">
+              <span>💻</span>
+              <span>${escapeHtml(currentStatus.node_name)}</span>
+              <span class="origin-badge origin-local" style="font-size: 0.7rem;">This PC (Host)</span>
+            </div>
+            <span style="font-size: 0.75rem; color: var(--success); font-weight: 600;">● Online</span>
+          </div>
+          <div style="font-size: 0.78rem; color: var(--text-dim); font-family: var(--font-mono);">
+            TCP: ${currentStatus.tcp_port} • Storage: ${escapeHtml(currentStatus.downloads_dir)}
+          </div>
+        `;
+        container.appendChild(localCard);
+      }
+
+      // 2. Connected Remote Clients
+      const activePeers = currentPeers.filter(p => p.is_connected);
+      if (activePeers.length === 0) {
+        const empty = document.createElement('div');
+        empty.style.padding = '1.5rem';
+        empty.style.textAlign = 'center';
+        empty.style.color = 'var(--text-muted)';
+        empty.style.fontSize = '0.85rem';
+        empty.innerText = 'No other devices currently active on the network. Open the T.U.S.H.E.R app on your tablet or secondary PC to connect automatically.';
+        container.appendChild(empty);
+      } else {
+        activePeers.forEach(p => {
+          const card = document.createElement('div');
+          card.className = 'client-card';
+          const icon = p.platform.toLowerCase().includes('android') ? '📱' : '💻';
+          
+          let servingHtml = '';
+          if (p.serving_folders && p.serving_folders.length > 0) {
+            const tags = p.serving_folders.map(f => `<span class="serving-tag">📁 ${escapeHtml(f)}</span>`).join('');
+            servingHtml = `
+              <div class="client-serving" style="margin-top: 0.25rem;">
+                Serving to mesh:
+                <div class="client-serving-tags">${tags}</div>
+              </div>
+            `;
+          } else {
+            servingHtml = `<div class="client-serving" style="margin-top: 0.25rem; font-style: italic;">Serving no folders yet</div>`;
+          }
+
+          card.innerHTML = `
+            <div class="client-top">
+              <div class="client-name">
+                <span>${icon}</span>
+                <span>${escapeHtml(p.node_name)}</span>
+                <span class="origin-badge origin-remote" style="font-size: 0.7rem;">${escapeHtml(p.platform)}</span>
+              </div>
+              <span style="font-size: 0.75rem; color: var(--success); font-weight: 600;">
+                ● Connected ${p.latency_ms ? `(${p.latency_ms} ms)` : ''}
+              </span>
+            </div>
+            <div style="font-size: 0.78rem; color: var(--text-dim); font-family: var(--font-mono);">
+              Transport: ${p.transport || 'Direct LAN'}
+            </div>
+            ${servingHtml}
+          `;
+          container.appendChild(card);
+        });
+      }
+    }
+
+    function renderFolders() {
+      const container = document.getElementById('folders-container');
+      container.innerHTML = '';
+
+      if (currentFolders.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state" style="grid-column: 1 / -1;">
+            <div class="empty-icon">📁</div>
+            <div class="empty-title">No Shared Folders in the Mesh</div>
+            <div class="empty-desc">
+              You haven't shared any directories yet. Click the button below to select a folder from this computer to share with your personal mesh.
+            </div>
+            <button class="primary" onclick="quickShareFolder()" style="padding: 0.75rem 1.5rem; font-size: 1rem;">
+              📁 Share a Folder Now
+            </button>
+          </div>
+        `;
+        return;
+      }
+
+      currentFolders.forEach(f => {
+        const card = document.createElement('div');
+        card.className = 'folder-card';
+
+        const isLocal = f.is_local;
+        const iconClass = isLocal ? '' : 'remote';
+        const badgeClass = isLocal ? 'origin-local' : 'origin-remote';
+        const deviceIcon = f.origin_device.toLowerCase().includes('android') ? '📱' : '💻';
+
+        let actionButtons = '';
+        if (isLocal) {
+          actionButtons = `
+            <button class="secondary" onclick="openInExplorer('${escapePath(f.local_path)}')">📂 Open</button>
+            <button class="secondary" onclick="rescanFolder('${f.folder_id}')">🔍 Scan</button>
+            <button class="primary" onclick="syncFolder('${f.folder_id}')">🔄 Sync</button>
+          `;
+        } else {
+          actionButtons = `
+            <button class="primary" onclick="syncFolder('${f.folder_id}')">🔄 Sync Now</button>
+          `;
+        }
+
+        card.innerHTML = `
+          <div class="folder-top">
+            <div class="folder-icon-box ${iconClass}">
+              📁
+            </div>
+            <div class="folder-info">
+              <div class="folder-name" title="${escapeHtml(f.folder_name)}">${escapeHtml(f.folder_name)}</div>
+              <div class="origin-badge ${badgeClass}">
+                <span>${deviceIcon}</span>
+                <span>${escapeHtml(f.origin_device)}</span>
+              </div>
+              <div class="folder-path" title="${escapeHtml(f.local_path)}">
+                ${escapeHtml(f.local_path)}
+              </div>
+            </div>
+          </div>
+
+          <div class="folder-meta">
+            <div>
+              <strong>${f.file_count}</strong> files indexed
+            </div>
+            <div class="folder-actions">
+              ${actionButtons}
+            </div>
+          </div>
+        `;
+
+        container.appendChild(card);
+      });
+    }
+
+    async function refreshData() {
+      try {
+        const [statusRes, peersRes, foldersRes] = await Promise.all([
+          fetch('/api/status'),
+          fetch('/api/peers'),
+          fetch('/api/folders')
+        ]);
+
+        if (statusRes.ok) currentStatus = await statusRes.json();
+        if (peersRes.ok) currentPeers = await peersRes.json();
+        if (foldersRes.ok) currentFolders = await foldersRes.json();
+
+        // Update Navbar
+        if (currentStatus) {
+          const activePeerCount = currentPeers.filter(p => p.is_connected).length;
+          document.getElementById('nav-peer-count').innerText = `${activePeerCount} Device${activePeerCount === 1 ? '' : 's'}`;
+
+          const statusPill = document.getElementById('nav-transfer-badge');
+          const statusText = document.getElementById('nav-transfer-text');
+          if (currentStatus.sync_paused) {
+            statusPill.classList.add('paused');
+            statusText.innerText = '⏸ Sync Paused';
+          } else {
+            statusPill.classList.remove('paused');
+            statusText.innerText = currentStatus.transfer_status || '✓ Mesh Active • Synced';
+          }
+
+          document.getElementById('btn-toggle-sync').innerText = currentStatus.sync_paused ? "Resume Sync" : "Pause Sync";
+          document.getElementById('hero-device-count').innerText = activePeerCount + 1; // including self
+        }
+
+        // Update Folder Counters
+        document.getElementById('hero-folder-count').innerText = currentFolders.length;
+        document.getElementById('grid-count-badge').innerText = `${currentFolders.length} Folder${currentFolders.length === 1 ? '' : 's'}`;
+
+        renderFolders();
+      } catch (err) {
+        console.error("Failed to fetch dashboard data:", err);
+      }
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+    }
+
+    function escapePath(str) {
+      if (!str) return '';
+      return str.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+    }
+
+    // Auto-refresh every 3.5 seconds
     refreshData();
-    setInterval(refreshData, 3000);
+    setInterval(refreshData, 3500);
   </script>
 </body>
 </html>

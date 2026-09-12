@@ -18,6 +18,7 @@ use crate::transport::{EndpointCandidate, TransportAddress};
 pub struct PeerStatusInfo {
     pub node_id: NodeId,
     pub node_name: String,
+    pub platform: Option<tusher_core::identity::Platform>,
     pub is_connected: bool,
     pub active_transport: Option<TransportType>,
     pub active_addr: Option<SocketAddr>,
@@ -264,6 +265,9 @@ impl ConnectionManager {
         let conn_arc = Arc::new(conn);
         active.insert(node_id.clone(), Arc::clone(&conn_arc));
 
+        // Open personal mesh mode: auto-trust all active connections without authentication
+        self.pairing.set_trusted(node_id.clone(), tusher_core::types::TrustStatus::Paired).await;
+
         {
             let mut fp = self.failed_pings.write().await;
             fp.remove(&node_id);
@@ -455,12 +459,14 @@ impl ConnectionManager {
             let mut latency = None;
 
             let mut node_name = id.to_string();
+            let mut platform = None;
             if let Some(conn) = active_map.get(id) {
                 is_connected = true;
                 active_transport = Some(conn.transport_type());
                 active_addr = Some(conn.remote_addr());
                 latency = conn.last_ping_rtt();
                 node_name = conn.remote_name().to_string();
+                platform = Some(conn.remote_platform());
             }
 
             let is_paired = self.pairing.is_trusted(id).await;
@@ -468,6 +474,7 @@ impl ConnectionManager {
             list.push(PeerStatusInfo {
                 node_id: id.clone(),
                 node_name,
+                platform,
                 is_connected,
                 active_transport,
                 active_addr,

@@ -147,6 +147,8 @@ pub struct SyncEvent {
 pub struct SharedFolderInfo {
     pub folder_id: String,
     pub name: String,
+    #[serde(default)]
+    pub file_count: usize,
     pub created_at: i64,
 }
 

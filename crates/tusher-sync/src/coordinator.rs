@@ -24,6 +24,7 @@ pub struct SyncCoordinator {
     registered_folders: Arc<RwLock<HashMap<String, PathBuf>>>,
     last_seen_seqs: Arc<RwLock<HashMap<(String, NodeId), u64>>>,
     in_flight_syncs: Arc<Mutex<HashSet<(String, NodeId)>>>,
+    remote_folders: Arc<RwLock<HashMap<NodeId, (String, String, Vec<tusher_core::protocol::SharedFolderInfo>)>>>,
     debounce_duration: Duration,
 }
 
@@ -45,6 +46,7 @@ impl SyncCoordinator {
             registered_folders: Arc::new(RwLock::new(HashMap::new())),
             last_seen_seqs: Arc::new(RwLock::new(HashMap::new())),
             in_flight_syncs: Arc::new(Mutex::new(HashSet::new())),
+            remote_folders: Arc::new(RwLock::new(HashMap::new())),
             debounce_duration,
         }
     }
@@ -67,6 +69,13 @@ impl SyncCoordinator {
 
     pub fn debounce_duration(&self) -> Duration {
         self.debounce_duration
+    }
+
+    pub async fn get_remote_folders(
+        &self,
+    ) -> HashMap<NodeId, (String, String, Vec<tusher_core::protocol::SharedFolderInfo>)> {
+        let rf = self.remote_folders.read().await;
+        rf.clone()
     }
 
     /// Registers a folder to participate in the decentralized sync mesh
@@ -99,6 +108,22 @@ impl SyncCoordinator {
         }
 
         info!("Registered folder '{}' at {}", folder_id, p.display());
+
+        // Broadcast updated folder list to all active connections
+        if let Ok(folders) = self.metadata.list_folders().await {
+            let mut info_list = Vec::new();
+            for f in folders {
+                let count = self.metadata.get_all_files(&f.folder_id).await.map(|files| files.len()).unwrap_or(0);
+                info_list.push(tusher_core::protocol::SharedFolderInfo {
+                    folder_id: f.folder_id,
+                    name: f.name,
+                    file_count: count,
+                    created_at: f.created_at,
+                });
+            }
+            self.network.broadcast(Message::FolderListResp { folders: info_list }).await;
+        }
+
         Ok(())
     }
 
@@ -265,18 +290,30 @@ impl SyncCoordinator {
             Message::FolderListReq => {
                 match self.metadata.list_folders().await {
                     Ok(folders) => {
-                        let info_list = folders
-                            .into_iter()
-                            .map(|f| tusher_core::protocol::SharedFolderInfo {
+                        let mut info_list = Vec::new();
+                        for f in folders {
+                            let count = self.metadata.get_all_files(&f.folder_id).await.map(|files| files.len()).unwrap_or(0);
+                            info_list.push(tusher_core::protocol::SharedFolderInfo {
                                 folder_id: f.folder_id,
                                 name: f.name,
+                                file_count: count,
                                 created_at: f.created_at,
-                            })
-                            .collect();
+                            });
+                        }
                         Some(Message::FolderListResp { folders: info_list })
                     }
                     Err(_) => None,
                 }
+            }
+
+            Message::FolderListResp { folders } => {
+                if let Some(conn) = self.network.get_active_connection(&peer_id).await {
+                    let name = conn.remote_name().to_string();
+                    let plat = format!("{:?}", conn.remote_platform());
+                    let mut rf = self.remote_folders.write().await;
+                    rf.insert(peer_id.clone(), (name, plat, folders));
+                }
+                None
             }
 
             _ => None,
@@ -662,6 +699,12 @@ impl SyncCoordinator {
 
                 for folder_id in folders {
                     let _ = this_periodic.trigger_sync(&folder_id).await;
+                }
+
+                // Query all active connections for their shared folders
+                let conns = this_periodic.network.get_all_active_connections().await;
+                for (_, conn) in conns {
+                    let _ = conn.send(Message::FolderListReq).await;
                 }
             }
         });

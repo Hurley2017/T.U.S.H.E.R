@@ -20,3 +20,18 @@ in_*.txt
 out_*.txt
 err_*.txt
 temp_test.*
+
+# Desktop app local state & vaults
+.tusher_desktop/
+demo_sync_vault/
+test_shared_docs/
+dist/**/*.exe
+
+# Test screenshots
+*.png
+
+# Android build outputs & local config
+android/.gradle/
+android/**/build/
+android/local.properties
+.gradle/
