@@ -35,3 +35,5 @@ android/.gradle/
 android/**/build/
 android/local.properties
 .gradle/
+
+release_assets/
